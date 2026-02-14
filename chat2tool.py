@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+from model_factory import get_model # import das credenciais do model_factory
 from langchain.agents import create_agent
 from langchain_core.tools import tool
 
@@ -21,8 +22,10 @@ def clima(cidade: str) -> str:
     return f"O clima em {cidade} está 28°C, ensolarado."
 
 # Cria o agente - LangChain 1.0
+# --- MUDANÇA AQUI: Use a factory para pegar o modelo ---
+llm = get_model(model_name="gpt-4o-mini") # 
 agent = create_agent(
-    model="anthropic:claude-haiku-4-5-20251001",
+    model=llm,
     tools=[somar, multiplicar, clima],
     system_prompt="Você é um assistente útil que responde em português."
 )
@@ -43,4 +46,4 @@ while True:
         elif tipo == "ToolMessage":
             print(f"  📦 Resultado: {msg.content}")
         elif tipo == "AIMessage" and msg.content:
-            print(f"Claude: {msg.content}\n")
+            print(f"🤖 ChatGPT: {msg.content}\n")

@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+from model_factory import get_model # imports das credenciais do model_factory
 from langchain.agents import create_agent
 from langchain.agents.middleware import wrap_model_call, ModelRequest
 from langchain_core.tools import tool
@@ -77,8 +78,9 @@ def billing_middleware(request, handler):
 
 checkpointer = InMemorySaver()
 
+llm = get_model(model_name="gpt-4o-mini") # 
 agent = create_agent(
-    model="anthropic:claude-haiku-4-5-20251001",
+    model=llm,
     tools=[somar, clima],
     system_prompt="Você é um assistente útil que responde em português.",
     middleware=[logger_middleware, billing_middleware],
@@ -95,7 +97,7 @@ tenant = {
     "tenant_id": "tenant_001",
     "user_id": "user_Julio",
     "plano": "pro",
-    "nome_empresa": "Cresce Vendas"
+    "nome_empresa": "Guardião Fênix"
 }
 
 while True:
@@ -118,4 +120,4 @@ while True:
         elif tipo == "ToolMessage":
             print(f"  📦 Resultado: {msg.content}")
         elif tipo == "AIMessage" and msg.content:
-            print(f"\nClaude: {msg.content}\n")
+            print(f"\n🤖 ChatGPT: {msg.content}\n")

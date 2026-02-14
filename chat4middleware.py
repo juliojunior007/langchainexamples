@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 load_dotenv()
-
+from model_factory import get_model # imports das credenciais do model_factory
 from langchain.agents import create_agent
 from langchain.agents.middleware import wrap_model_call, ModelRequest
 from langchain_core.tools import tool
@@ -57,7 +57,7 @@ def token_counter(request, handler):
 checkpointer = InMemorySaver()
 
 agent = create_agent(
-    model="anthropic:claude-haiku-4-5-20251001",
+    model="gpt-4o-mini",
     tools=[somar, clima],
     system_prompt="Você é um assistente útil que responde em português.",
     middleware=[logger_middleware, token_counter],
@@ -87,4 +87,4 @@ while True:
         elif tipo == "ToolMessage":
             print(f"  📦 Resultado: {msg.content}")
         elif tipo == "AIMessage" and msg.content:
-            print(f"\nClaude: {msg.content}\n")
+            print(f"\nChatGPT: {msg.content}\n")

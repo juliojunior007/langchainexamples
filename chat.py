@@ -12,4 +12,4 @@ while True:
         break
     
     resposta = llm.invoke(pergunta)
-    print(f"🤖: {resposta.content}\n")
+    print(f"🤖 ChatGPT: {resposta.content}\n")

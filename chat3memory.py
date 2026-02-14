@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 load_dotenv()
-
+from model_factory import get_model # imports das credenciais do model_factory
 from langchain.agents import create_agent
 from langchain_core.tools import tool
 from langgraph.checkpoint.memory import InMemorySaver
@@ -25,8 +25,9 @@ def clima(cidade: str) -> str:
 checkpointer = InMemorySaver()
 
 # Cria o agente com memória
+llm = get_model(model_name="gpt-4o-mini")
 agent = create_agent(
-    model="anthropic:claude-haiku-4-5-20251001",
+    model="gpt-4o-mini",
     tools=[somar, multiplicar, clima],
     system_prompt="Você é um assistente útil que responde em português.",
     checkpointer=checkpointer
@@ -61,4 +62,4 @@ while True:
         elif tipo == "ToolMessage":
             print(f"  📦 Resultado: {msg.content}")
         elif tipo == "AIMessage" and msg.content:
-            print(f"Claude: {msg.content}\n")
+            print(f"ChatGPT: {msg.content}\n")
