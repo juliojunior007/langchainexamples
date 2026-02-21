@@ -6,6 +6,8 @@ from typing import Annotated
 from langchain_core.tools import tool
 from langchain.agents import create_agent
 from langgraph_supervisor import create_supervisor
+from langchain_openai import ChatOpenAI
+from model_factory import get_model   # <-- importe sua factory
 
 load_dotenv()
 
@@ -52,21 +54,31 @@ def gerar_codigo(descricao: str, linguagem: str = "python") -> str:
     """Gera código baseado em uma descrição."""
     return f"📝 Código {linguagem} gerado para: {descricao}"
 
+# ==================== MODELOS USANDO A FACTORY ====================
+# Para os agentes (OpenAI)
+modelo_pesquisador = get_model("gpt-4o-mini", temperature=0)
+modelo_codificador = get_model("gpt-4o-mini", temperature=0)
+
+# Para o supervisor (se quiser usar OpenAI)
+modelo_supervisor = get_model("gpt-4o", temperature=0)
+
 
 # ==================== AGENTES ====================
 
 pesquisador = create_agent(
-    model="anthropic:claude-haiku-4-5-20251001",
+    model=modelo_pesquisador,          # objeto vindo da factory
     tools=[buscar_web, buscar_documentacao],
     name="pesquisador",
-    system_prompt="Você é um pesquisador. Busque informações usando suas ferramentas. Não escreva código."
+    system_prompt="Você é um pesquisador. Busque informações usando suas ferramentas. " \
+    "Não escreva código."
 )
 
 codificador = create_agent(
-    model="anthropic:claude-haiku-4-5-20251001",
+    model=modelo_codificador,
     tools=[executar_python, gerar_codigo],
     name="codificador",
-    system_prompt="Você é um codificador Python/JS. Escreva e execute código. Não pesquise na web."
+    system_prompt="Você é um codificador Python/JS. Escreva e execute código. " \
+    "Não pesquise na web."
 )
 
 
@@ -74,7 +86,7 @@ codificador = create_agent(
 
 workflow = create_supervisor(
     agents=[pesquisador, codificador],
-    model="anthropic:claude-haiku-4-5-20251001",
+    model=modelo_supervisor,
     prompt="""Você é o Supervisor com 2 agentes:
     1. pesquisador - busca informações e documentação
     2. codificador - escreve e executa código

@@ -33,7 +33,7 @@ agent = create_agent(
 print("Chat com Tools (digite 'sair' pra encerrar)\n")
 
 while True:
-    pergunta = input("Você: ")
+    pergunta = input("Digite sua pergunta: ")
     if pergunta.lower() == "sair":
         break
     resultado = agent.invoke({"messages": [{"role": "user", "content": pergunta}]})

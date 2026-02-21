@@ -7,6 +7,7 @@ from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from typing import Annotated, TypedDict
+from model_factory import get_model
 
 # Tools
 @tool
@@ -29,7 +30,7 @@ class State(TypedDict):
     messages: Annotated[list, add_messages]
 
 # Modelo com tools
-llm = init_chat_model("anthropic:claude-haiku-4-5-20251001")
+llm = init_chat_model("gpt-4o-mini")
 llm_com_tools = llm.bind_tools([somar, multiplicar, clima])
 
 # Nó do agente (chama o LLM)
